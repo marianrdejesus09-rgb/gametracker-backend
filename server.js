@@ -1,22 +1,30 @@
 import express from "express";
-import cors from "cors";
 import mongoose from "mongoose";
-import gameRoutes from "./routes/gameRoutes.js";
+import { MongoMemoryServer } from "mongodb-memory-server";
+import gameRoutes from "./routes/gameRoutes.js"; // tus rutas
 
 const app = express();
-const PORT = 5000;
-
-app.use(cors());
 app.use(express.json());
 
-// Asegúrate de que esta línea esté así:
+// --- Rutas ---
 app.use("/api/games", gameRoutes);
 
-mongoose.connect("mongodb://127.0.0.1:27017/gametracker")
+// --- Conexión a MongoDB en memoria ---
+async function startServer() {
+  try {
+    const mongod = await MongoMemoryServer.create();
+    const uri = mongod.getUri();
 
-  .then(() => console.log("MongoDB conectado ✅"))
-  .catch(err => console.log(err));
+    await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log("MongoDB en memoria listo ✅");
 
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en puerto ${PORT}`);
-});
+    // --- Iniciar servidor ---
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));
+  } catch (error) {
+    console.error("Error al iniciar el servidor:", error);
+  }
+}
+
+// --- Arrancar todo ---
+startServer();
