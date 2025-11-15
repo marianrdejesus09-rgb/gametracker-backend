@@ -1,8 +1,8 @@
 {
   "name": "gametracker-frontend",
-  "version": "1.0.0",
-  "private": true,
+  "version": "0.0.0",
   "homepage": "https://marianrdejesus09-rgb.github.io/gametracker-frontend",
+  "private": true,
   "scripts": {
     "dev": "vite",
     "build": "vite build",
